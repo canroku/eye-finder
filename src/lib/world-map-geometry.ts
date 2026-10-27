@@ -1,3 +1,5 @@
+import { withBasePath } from "@/lib/api";
+
 /** simple-world-map SVG viewBox (flekschas/simple-world-map, CC BY-SA 3.0) */
 export const WORLD_MAP_VIEW = {
   x: 30.767,
@@ -117,7 +119,7 @@ let shapesCache: Promise<MapShape[]> | null = null;
 
 export function loadWorldMapShapes(): Promise<MapShape[]> {
   if (!shapesCache) {
-    shapesCache = fetch("/maps/world-outline.svg")
+    shapesCache = fetch(withBasePath("/maps/world-outline.svg"))
       .then((r) => r.text())
       .then(parseWorldMapSvg);
   }

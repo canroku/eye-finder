@@ -12,6 +12,7 @@ import { clearProfileDraft, saveProfile, saveResult } from "@/lib/storage";
 import { prepareProfileForPipeline } from "@/lib/utils/photo-storage";
 import { trackEvent } from "@/lib/analytics";
 import { getUserErrorMessage } from "@/lib/errors";
+import { withBasePath } from "@/lib/api";
 import { isOnline } from "@/lib/network";
 import { recordAnalysisComplete } from "@/lib/engagement/store";
 import type { OnboardingMode } from "@/lib/data/personality-questions";
@@ -65,7 +66,7 @@ export default function OnboardingPage() {
       await saveProfile(prepared);
       recordAnalysisComplete(pipelineResult.eyeScore.eyeScore ?? null);
 
-      window.location.replace("/results");
+      window.location.replace(withBasePath("/results"));
     } catch (err) {
       console.error("Pipeline failed:", err);
       trackEvent("pipeline_error", {

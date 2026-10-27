@@ -1,6 +1,7 @@
 "use client";
 
 import type { CountryResult, PipelineResult, UserProfile } from "@/lib/types";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { RadarChart } from "@/components/ui/RadarChart";
@@ -313,9 +314,9 @@ export function ResultsDashboard({ result: rawResult }: Props) {
       {allCountries.length > tierCountries.length && (
         <p className="text-center text-xs text-zinc-500">
           {allCountries.length - tierCountries.length} ülke daha var —
-          <a href="/plans" className="ml-1 text-accent hover:underline">
+          <Link href="/plans" className="ml-1 text-accent hover:underline">
             planı yükselt
-          </a>
+          </Link>
         </p>
       )}
 

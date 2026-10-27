@@ -8,6 +8,7 @@ import { runPipelineSafe } from "@/lib/pipeline/runner";
 import { saveProfile, saveResult } from "@/lib/storage";
 import { trackEvent } from "@/lib/analytics";
 import { getUserErrorMessage } from "@/lib/errors";
+import { withBasePath } from "@/lib/api";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -30,7 +31,7 @@ export default function DemoPage() {
       }
       await saveResult(result);
       await saveProfile(profile);
-      window.location.replace("/results");
+      window.location.replace(withBasePath("/results"));
     } catch (err) {
       setError(getUserErrorMessage(err));
       setLoading(false);

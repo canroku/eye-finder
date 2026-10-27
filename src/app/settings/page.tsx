@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiFetch, apiUrl } from "@/lib/api";
+import { apiFetch, apiUrl, IS_GITHUB_PAGES, withBasePath } from "@/lib/api";
 import { FeedbackForm } from "@/components/feedback/FeedbackForm";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
@@ -64,7 +64,7 @@ export default function SettingsPage() {
         fullSystemReset(),
         new Promise<void>((resolve) => setTimeout(resolve, RESET_TIMEOUT_MS)),
       ]);
-      window.location.replace("/");
+      window.location.replace(withBasePath("/"));
     } catch (err) {
       setResetError(getUserErrorMessage(err));
       setResetting(false);
@@ -142,6 +142,7 @@ export default function SettingsPage() {
         <Link href="/privacy" className="text-sm text-accent hover:underline">
           Gizlilik & KVKK metni →
         </Link>
+        {!IS_GITHUB_PAGES && (
         <a
           href={apiUrl("/api/kvkk")}
           target="_blank"
@@ -150,6 +151,7 @@ export default function SettingsPage() {
         >
           API JSON →
         </a>
+        )}
       </GlassCard>
 
       <GlassCard title="Beta" subtitle={`v${APP_VERSION}`}>

@@ -12,6 +12,7 @@
     "reset:data": "node scripts/reset-data.mjs",
     "seed:users": "node scripts/seed-users.mjs",
     "fresh": "node scripts/reset-data.mjs && next dev",
+    "build:pages": "node scripts/build-pages.mjs",
     "android:prepare": "node scripts/build-android.mjs",
     "android:open": "npx cap open android",
     "android:sync": "npx cap sync android",

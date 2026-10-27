@@ -7,6 +7,7 @@ import { ResultsDashboard } from "@/components/results/ResultsDashboard";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { fullSystemReset, loadResult } from "@/lib/storage";
 import { getUserErrorMessage } from "@/lib/errors";
+import { withBasePath } from "@/lib/api";
 import { completeDailyMission } from "@/lib/engagement/store";
 
 export default function ResultsPage() {
@@ -106,7 +107,7 @@ export default function ResultsPage() {
             if (!confirm("Tüm veriler silinecek. Emin misin?")) return;
             try {
               await fullSystemReset();
-              window.location.replace("/");
+              window.location.replace(withBasePath("/"));
             } catch (err) {
               alert(getUserErrorMessage(err));
             }

@@ -1,6 +1,7 @@
 "use client";
 
 import type { FaceScanResult } from "@/lib/types";
+import { withBasePath } from "@/lib/api";
 import {
   PHOTO_DEPTH_PER_FACE,
   PHOTO_DEPTH_PER_UPLOAD,
@@ -18,9 +19,9 @@ export async function loadFaceModels(): Promise<void> {
   loadingPromise = (async () => {
     const faceapi = await import("@vladmandic/face-api");
     await Promise.all([
-      faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
-      faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-      faceapi.nets.faceExpressionNet.loadFromUri("/models"),
+      faceapi.nets.tinyFaceDetector.loadFromUri(withBasePath("/models")),
+      faceapi.nets.faceLandmark68Net.loadFromUri(withBasePath("/models")),
+      faceapi.nets.faceExpressionNet.loadFromUri(withBasePath("/models")),
     ]);
     modelsLoaded = true;
   })();

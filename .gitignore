@@ -16,6 +16,7 @@
 /build/
 /dist/
 /.mobile-build/
+/.pages-build/
 
 # Testing
 /coverage/
