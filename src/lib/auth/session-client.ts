@@ -4,7 +4,9 @@ import type { SubscriptionTier } from "@/lib/subscription/tiers";
 import { AUTH_CHANGED_EVENT, TIER_CHANGED_EVENT } from "@/lib/auth/constants";
 import { apiFetch, IS_LOCAL_ONLY } from "@/lib/api";
 
-const LOCAL_SESSION_KEY = "ef_local_session";
+// v2: eski kayıtlar (admin dahil) plan "free" ile takılı kalabiliyordu; yeni anahtar bunları temizler.
+const LOCAL_SESSION_KEY = "ef_local_session_v2";
+const LEGACY_LOCAL_SESSION_KEY = "ef_local_session";
 
 /** Yerel (statik) modda admin yetkisi yalnızca bu e-postalar için verilir. */
 export const LOCAL_ADMIN_EMAILS = ["admin@eyefinder.local"];
@@ -29,10 +31,10 @@ export function writeLocalSession(user: AuthUser | null): void {
 
 function readLocalSession(): AuthUser | null {
   try {
+    localStorage.removeItem(LEGACY_LOCAL_SESSION_KEY);
     const raw = localStorage.getItem(LOCAL_SESSION_KEY);
     if (!raw) return null;
     const user = JSON.parse(raw) as AuthUser;
-    // Eski kayıtlarda admin bayrağı olmayabilir; e-postadan yeniden hesapla.
     const isAdmin = LOCAL_ADMIN_EMAILS.includes(user.email.trim().toLowerCase());
     return { ...user, isAdmin };
   } catch {
