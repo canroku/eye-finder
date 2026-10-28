@@ -22,6 +22,9 @@ import { mergeCloudDataIntoLocal } from "@/lib/storage";
 import { AUTH_CHANGED_EVENT } from "@/lib/auth/constants";
 import { apiFetch, IS_LOCAL_ONLY } from "@/lib/api";
 
+/** Yerel (statik) modda admin yetkisi yalnızca bu e-postalar için verilir. */
+const LOCAL_ADMIN_EMAILS = ["admin@eyefinder.local"];
+
 /** Mobil APK'da sunucu yok: oturum yalnızca cihazda tutulur. */
 const LOCAL_GUEST: AuthUser = {
   id: "local-guest",
@@ -80,11 +83,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     if (IS_LOCAL_ONLY) {
+      const normalized = email.trim().toLowerCase();
       startLocalSession({
-        id: `local-${email.trim().toLowerCase()}`,
+        id: `local-${normalized}`,
         email: email.trim(),
-        tier: "free",
+        tier: LOCAL_ADMIN_EMAILS.includes(normalized) ? "pro" : "free",
         tierExpiresAt: null,
+        isAdmin: LOCAL_ADMIN_EMAILS.includes(normalized),
         isGuest: false,
       });
       return null;
@@ -138,6 +143,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refresh, startLocalSession]);
 
   const upgradeTier = useCallback(async (tier: SubscriptionTier, billing: "monthly" | "yearly" = "monthly") => {
+    if (IS_LOCAL_ONLY) {
+      // Sunucu yok: planı yalnızca cihazdaki oturumda güncelle.
+      const current = await fetchSession();
+      if (!current) return "Oturum gerekli";
+      const next: AuthUser = {
+        ...current,
+        tier,
+        tierExpiresAt:
+          tier === "free"
+            ? null
+            : new Date(Date.now() + (billing === "yearly" ? 365 : 30) * 86400000).toISOString(),
+      };
+      startLocalSession(next);
+      notifyTierChanged();
+      return null;
+    }
     const res = await apiFetch("/api/subscription/upgrade", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -149,7 +170,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     notifyTierChanged();
     notifyAuthChanged();
     return null;
-  }, [applyUser]);
+  }, [applyUser, startLocalSession]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
