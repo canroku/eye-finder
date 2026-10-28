@@ -12,6 +12,7 @@ import {
 import type { SubscriptionTier } from "@/lib/subscription/tiers";
 import {
   fetchSession,
+  LOCAL_ADMIN_EMAILS,
   notifyAuthChanged,
   notifyTierChanged,
   writeLocalSession,
@@ -21,9 +22,6 @@ import { setCachedAuthUser } from "@/lib/subscription/client";
 import { mergeCloudDataIntoLocal } from "@/lib/storage";
 import { AUTH_CHANGED_EVENT } from "@/lib/auth/constants";
 import { apiFetch, IS_LOCAL_ONLY } from "@/lib/api";
-
-/** Yerel (statik) modda admin yetkisi yalnızca bu e-postalar için verilir. */
-const LOCAL_ADMIN_EMAILS = ["admin@eyefinder.local"];
 
 /** Mobil APK'da sunucu yok: oturum yalnızca cihazda tutulur. */
 const LOCAL_GUEST: AuthUser = {

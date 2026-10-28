@@ -6,6 +6,9 @@ import { apiFetch, IS_LOCAL_ONLY } from "@/lib/api";
 
 const LOCAL_SESSION_KEY = "ef_local_session";
 
+/** Yerel (statik) modda admin yetkisi yalnızca bu e-postalar için verilir. */
+export const LOCAL_ADMIN_EMAILS = ["admin@eyefinder.local"];
+
 export interface AuthUser {
   id: string;
   email: string;
@@ -27,7 +30,11 @@ export function writeLocalSession(user: AuthUser | null): void {
 function readLocalSession(): AuthUser | null {
   try {
     const raw = localStorage.getItem(LOCAL_SESSION_KEY);
-    return raw ? (JSON.parse(raw) as AuthUser) : null;
+    if (!raw) return null;
+    const user = JSON.parse(raw) as AuthUser;
+    // Eski kayıtlarda admin bayrağı olmayabilir; e-postadan yeniden hesapla.
+    const isAdmin = LOCAL_ADMIN_EMAILS.includes(user.email.trim().toLowerCase());
+    return { ...user, isAdmin };
   } catch {
     return null;
   }
